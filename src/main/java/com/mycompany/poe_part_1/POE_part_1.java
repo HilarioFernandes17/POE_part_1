@@ -44,7 +44,7 @@ public class POE_part_1 {
         System.out.println("Enter Username");
         String loginUsername = scanner.nextLine();
 
-        System.out.println("Enter Passworddd");
+        System.out.println("Enter Password");
         String loginPassword = scanner.nextLine();
 
         //Cheking Login

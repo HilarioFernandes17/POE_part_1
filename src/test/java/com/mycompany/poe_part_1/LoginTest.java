@@ -100,21 +100,21 @@ public class LoginTest {
 
     @Test
     public void testLoginUser_Success() {
-        login.registerUser("kyl_1", "Ch&&sec@ke99!", "+27838966553");
+        login.registerUser("kyl_1", "Ch&&sec@ke99!", "+27000000000");
             assertTrue(login.loginUser("kyl_1", "Ch&&sec@ke99!"));
     }
 
     @Test
     public void testLoginUser_Failure() {
-        login.registerUser("kyl_1", "Ch&&sec@ke99!", "+27838966553");
-        assertFalse(login.loginUser("Kyle07", "Deolinda11"));
+        login.registerUser("kyl_1", "Ch&&sec@ke99!", "+27000000000");
+        assertFalse(login.loginUser("Kyle07", "Alegiaff11"));
     }
 
     @Test
     public void testReturnLoginStatus_Success() {
-        login.registerUser("kyl_1", "Ch&&sec@ke99!", "+27838966553");
+        login.registerUser("kyl_1", "Ch&&sec@ke99!", "+27000000000");
         String message = login.returnLoginStatus("kyl_1", "Ch&&sec@ke99!");
-        assertEquals("Welcome Kyle Miguel, it is great to see you again!", message);
+        assertEquals("Welcome Kyle Antonio, it is great to see you again!", message);
     }
 
     @Test
