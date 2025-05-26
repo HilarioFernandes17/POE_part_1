@@ -11,8 +11,8 @@ package com.mycompany.poe_part_1;
 public class Login {
     
             //The main ttributes
-    private String firstName;
-    private String lastName;
+    private final String firstName;
+    private final String lastName;
     private static String username;
     private String password;
     private String cellNumber;

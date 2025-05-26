@@ -4,54 +4,72 @@
 package com.mycompany.poe_part_1;
 
 import java.util.Scanner;
+import javax.swing.*;
 
 /**
  *
- * @author hilar
+ * @author hilario
  */
 public class POE_part_1 {
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Welcome to the User Authentication System!");
+        boolean loggedIn = true;  // Simulated login success
+        if (!loggedIn) {
+            JOptionPane.showMessageDialog(null, "You must log in to send messages.");
+            return;
+        }
 
-        System.out.println("=== User Registration ===");
-        System.out.print("Enter First Name: ");
-        String firstName = scanner.nextLine();
+        JOptionPane.showMessageDialog(null, "Welcome to QuickChat.");
+        Message[] messages = new Message[5];
+        int messageCount = 0;
+        int totalMessages = Integer.parseInt(JOptionPane.showInputDialog("How many messages do you want to send?"));
 
-        System.out.print("Enter Last Name: ");
-        String lastName = scanner.nextLine();
+        while (true) {
+            String choice = JOptionPane.showInputDialog("Choose an option:\n1) Send Message\n2) Show recently sent messages\n3) Quit");
 
-        System.out.print("Enter Username (max 5 characters and must include '_'): ");
-        String username = scanner.nextLine();
+            switch (choice) {
+                case "1":
+                    if (messageCount >= totalMessages) {
+                        JOptionPane.showMessageDialog(null, "Message limit reached.");
+                        continue;
+                    }
 
-        System.out.print("Enter Password (min 8 characters, must include a capital letter, number, special character): ");
-        String password = scanner.nextLine();
+                    String recipient = JOptionPane.showInputDialog("Enter recipient cell number (+ format):");
+                    String content = JOptionPane.showInputDialog("Enter message (max 250 characters):");
 
-        System.out.print("Enter Phone Number (format: +27xxxxxxxxxx): ");
-        String phoneNumber = scanner.nextLine();
+                    Message msg = new Message();
+                    if (!msg.checkRecipientCell(recipient)) {
+                        JOptionPane.showMessageDialog(null, "Cell phone number is incorrectly formatted.");
+                        continue;
+                    }
 
-        // Creating the Login object
-        Login user = new Login(firstName, lastName, username, password, phoneNumber);
+                    if (content.length() > 250) {
+                        JOptionPane.showMessageDialog(null, "Message exceeds 250 characters by " + (content.length() - 250));
+                        continue;
+                    }
 
-        // Registering the user
-        String registrationMessage = user.registerUser(username, password, phoneNumber);
-        System.out.println(registrationMessage);
+                    msg.generateMessage(recipient, content, messageCount);
+                    String option = JOptionPane.showInputDialog("Choose option: Send / Store / Discard");
+                    JOptionPane.showMessageDialog(null, msg.sendMessageOption(option));
+                    JOptionPane.showMessageDialog(null, msg.printMessage());
 
-        //Login 
-        System.out.println("\n---- User Login----");
-        System.out.println("Enter Username");
-        String loginUsername = scanner.nextLine();
+                    messages[messageCount] = msg;
+                    messageCount++;
+                    break;
 
-        System.out.println("Enter Password");
-        String loginPassword = scanner.nextLine();
+                case "2":
+                    JOptionPane.showMessageDialog(null, "Coming Soon.");
+                    break;
 
-        //Cheking Login
-        String loginMessage = user.returnLoginStatus(loginUsername, loginPassword);
-        System.out.println(loginMessage);
+                case "3":
+                    JOptionPane.showMessageDialog(null, "Quitting application.");
+                    return;
 
-        scanner.close();
+                default:
+                    JOptionPane.showMessageDialog(null, "Invalid selection.");
+            }
+        }
 
     }
 }
