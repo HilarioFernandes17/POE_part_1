@@ -3,81 +3,94 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.poe_part_1;
-import javax.swing.*;
-import java.util.Random;
+import javax.swing.JOptionPane;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
+
 /**
  *
  * @author hilar
  */
-public class Message {
-    
-    private String messageID;
-    private int messageNumber;
-    private String recipient;
-    private String message;
-    private String messageHash;
+public final class Message {
+    private long messageId = generateRandom();
+    private final String message;
+    private final long recipient;
+    private final String hash;
 
-    public boolean checkMessageID(String messageID) {
-        return messageID.length() <= 10;
-    }
 
-    public boolean checkRecipientCell(String cellNumber) {
-        return cellNumber.startsWith("+") && cellNumber.length() <= 13;
-    }
+    // Static list of all messages
+    private static final ArrayList<Message> messagesList = new ArrayList<>();
 
-    public String createMessageHash() {
-        String[] words = message.trim().split("\\s+");
-        String first = words[0];
-        String last = words[words.length - 1];
-        String hash = messageID.substring(0, 2) + ":" + messageNumber + ":" + first + last;
-        return hash.toUpperCase();
-    }
-
-    public String sendMessageOption(String option) {
-        switch (option.toLowerCase()) {
-            case "send":
-                return "Message successfully sent.";
-            case "store":
-                return "Message successfully stored.";
-            case "discard":
-                return "Press 0 to delete message.";
-            default:
-                return "Invalid option.";
-        }
-    }
-
-    public String printMessage() {
-        return "Message ID: " + messageID +
-               "\nMessage Hash: " + messageHash +
-               "\nRecipient: " + recipient +
-               "\nMessage: " + message;
-    }
-
-    public int getMessageNumber() {
-        return messageNumber;
-    }
-
-    public void generateMessage(String recipient, String message, int messageCount) {
-        this.recipient = recipient;
+    // Constructor
+    public Message( String message, long recipient) {
         this.message = message;
-        this.messageNumber = messageCount;
-        this.messageID = String.format("%010d", new Random().nextInt(1_000_000_000));
-        this.messageHash = createMessageHash();
+        this.recipient = recipient;
+        this.hash = createMessageHash();
+        messagesList.add(this);
     }
-    
-    public void storeMessage() {
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();  // Create a Gson object with formatting
 
-    try (FileWriter writer = new FileWriter("stored_messages.json", true)) {
-        gson.toJson(this, writer);  // 'this' refers to the current Message object
-        System.out.println("Message successfully saved to JSON.");
-    } catch (IOException e) {
-        System.out.println("Error saving message: " + e.getMessage());
+    // Getters
+
+    public long getMessageId() {
+        return messageId;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public long getRecipient() {
+        return recipient;
+    }
+
+    public static ArrayList<Message> getMessagesList() {
+        return messagesList;
+    }
+
+    public static void clearMessagesList() {
+        messagesList.clear();
+    }
+
+    // Generates a random 10-digit message ID
+    public long generateRandom() {
+        Random random = new Random();
+        long id = 1000000000L + (long)(random.nextDouble() * 8999999999L);
+        this.messageId = id;
+        return id;
+    }
+    
+
+    // Creates a hash based on the message content & ID
+    public String createMessageHash() {
+        String[] words = message.split(" ");
+        String firstWord = words[0];
+        String lastWord = words[words.length - 1];
+
+        String prefix = "";
+        String hash;
+        if(String.valueOf(messageId).length()<2){ prefix = String.valueOf(messageId);}else{ prefix = String.valueOf(messageId).substring(0, 2);}
+
+            hash = prefix + ":" + MessageManager.getTotalMessagesCount() +":"+ firstWord+lastWord;
+
+        return hash;
+    }
+    public String getMessageHash(){return hash;}
+
+    // Returns all messages as a JSON string
+    public static String getMessagesAsJsonString() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(messagesList);
+    }
+
+    public static void printMessagesAsJson() {
+        Gson gson = new Gson();
+        StringBuilder jsonOutput = new StringBuilder("Recently Sent Messages (JSON):\n\n");
+        for (Message m : messagesList) {
+            jsonOutput.append(gson.toJson(m)).append("\n");
+        }
+        JOptionPane.showMessageDialog(null, jsonOutput.toString());
     }
 }
-    
-}
+
